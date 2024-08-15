@@ -3,28 +3,30 @@
 import { useState, useEffect, useRef } from 'react'
 import { getDocument, streamChat } from '../../../utils/api'
 import { FiSend } from 'react-icons/fi'
+import { withAuth } from '../../../utils/withAuth'
 
-export default function Chat({ params }) {
+function Chat({ params }) {
   const [document, setDocument] = useState(null)
   const [messages, setMessages] = useState([])
   const [input, setInput] = useState('')
   const chatEndRef = useRef(null)
 
   useEffect(() => {
-    const fetchDocument = async () => {
-      try {
-        const data = await getDocument(params.id)
-        setDocument(data)
-      } catch (error) {
-        console.error('Failed to fetch document:', error)
-      }
-    }
     fetchDocument()
   }, [params.id])
 
   useEffect(() => {
     chatEndRef.current?.scrollIntoView({ behavior: 'smooth' })
   }, [messages])
+
+  const fetchDocument = async () => {
+    try {
+      const data = await getDocument(params.id)
+      setDocument(data)
+    } catch (error) {
+      console.error('Failed to fetch document:', error)
+    }
+  }
 
   const handleSendMessage = async (e) => {
     e.preventDefault()
@@ -75,3 +77,5 @@ export default function Chat({ params }) {
     </div>
   )
 }
+
+export default withAuth(Chat)

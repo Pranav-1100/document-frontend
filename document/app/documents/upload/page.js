@@ -4,8 +4,9 @@ import { useState } from 'react'
 import { createDocument } from '../../../utils/api'
 import { FiUpload } from 'react-icons/fi'
 import FileUpload from '../../../components/FileUpload'
+import { withAuth } from '../../../utils/withAuth'
 
-export default function UploadDocument() {
+function UploadDocument() {
   const [title, setTitle] = useState('')
   const [content, setContent] = useState('')
   const [fileId, setFileId] = useState(null)
@@ -62,3 +63,5 @@ export default function UploadDocument() {
     </div>
   )
 }
+
+export default withAuth(UploadDocument)

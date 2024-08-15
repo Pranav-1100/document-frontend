@@ -4,21 +4,23 @@ import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import { getDocuments } from '../../utils/api'
 import { FiFile, FiPlus } from 'react-icons/fi'
+import { withAuth } from '../../utils/withAuth'
 
-export default function Documents() {
+function Documents() {
   const [documents, setDocuments] = useState([])
 
   useEffect(() => {
-    const fetchDocuments = async () => {
-      try {
-        const data = await getDocuments()
-        setDocuments(data)
-      } catch (error) {
-        console.error('Failed to fetch documents:', error)
-      }
-    }
     fetchDocuments()
   }, [])
+
+  const fetchDocuments = async () => {
+    try {
+      const data = await getDocuments()
+      setDocuments(data)
+    } catch (error) {
+      console.error('Failed to fetch documents:', error)
+    }
+  }
 
   return (
     <div>
@@ -43,3 +45,5 @@ export default function Documents() {
     </div>
   )
 }
+
+export default withAuth(Documents)

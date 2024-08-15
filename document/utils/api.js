@@ -6,6 +6,10 @@ const api = axios.create({
     'Content-Type': 'application/json',
   },
 });
+const getAuthHeader = () => {
+  const token = localStorage.getItem('authToken');
+  return token ? { Authorization: `Bearer ${token}` } : {};
+};
 
 // Auth
 export const login = async (email, password) => {
@@ -23,9 +27,9 @@ export const getCurrentUser = async () => {
   return response.data;
 };
 
-// Documents
+// Then use it in your API calls, for example:
 export const getDocuments = async () => {
-  const response = await api.get('/api/documents');
+  const response = await api.get('/api/documents', { headers: getAuthHeader() });
   return response.data;
 };
 
@@ -209,4 +213,7 @@ export const deleteFile = async (id) => {
   return response.data;
 };
 
+
+
 export default api;
+

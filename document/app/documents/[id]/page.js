@@ -6,8 +6,9 @@ import Link from 'next/link'
 import { getDocument, summarizeDocument, deleteDocument } from '../../../utils/api'
 import { FiMessageSquare, FiTrash2 } from 'react-icons/fi'
 import TagManager from '../../../components/TagManager'
+import { withAuth } from '../../../utils/withAuth'
 
-export default function Document({ params }) {
+function Document({ params }) {
   const [document, setDocument] = useState(null)
   const [summary, setSummary] = useState('')
   const router = useRouter()
@@ -79,3 +80,5 @@ export default function Document({ params }) {
     </div>
   )
 }
+
+export default withAuth(Document)

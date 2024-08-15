@@ -1,6 +1,8 @@
 'use client'
 
 import { useState } from 'react'
+import { useRouter } from 'next/navigation'
+import Link from 'next/link'
 import { register } from '../../../utils/api'
 import { FiUser, FiMail, FiLock } from 'react-icons/fi'
 
@@ -8,22 +10,26 @@ export default function Register() {
   const [username, setUsername] = useState('')
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
+  const [error, setError] = useState('')
+  const router = useRouter()
 
   const handleSubmit = async (e) => {
     e.preventDefault()
+    setError('')
     try {
       const data = await register(username, email, password)
-      console.log('Registration successful:', data)
-      // Handle successful registration (e.g., store token, redirect)
+      localStorage.setItem('authToken', data.token)
+      router.push('/documents')
     } catch (error) {
       console.error('Registration failed:', error)
-      // Handle registration error (e.g., show error message)
+      setError('Registration failed. Please try again.')
     }
   }
 
   return (
     <div className="max-w-md mx-auto">
       <h1 className="text-3xl font-bold mb-6 text-center text-accent">Register</h1>
+      {error && <p className="text-red-500 text-center mb-4">{error}</p>}
       <form onSubmit={handleSubmit} className="bg-surface p-8 rounded-lg shadow-lg">
         <div className="mb-4">
           <label htmlFor="username" className="block text-sm font-medium mb-2">Username</label>
@@ -32,7 +38,7 @@ export default function Register() {
             <input
               id="username"
               type="text"
-              className="w-full pl-10 pr-3 py-2 rounded-md bg-background border border-gray-700 focus:outline-none focus:border-accent"
+              className="w-full pl-10 pr-3 py-2 rounded-md bg-background border border-gray-700 focus:outline-none focus:border-accent text-text"
               placeholder="Choose a username"
               value={username}
               onChange={(e) => setUsername(e.target.value)}
@@ -47,7 +53,7 @@ export default function Register() {
             <input
               id="email"
               type="email"
-              className="w-full pl-10 pr-3 py-2 rounded-md bg-background border border-gray-700 focus:outline-none focus:border-accent"
+              className="w-full pl-10 pr-3 py-2 rounded-md bg-background border border-gray-700 focus:outline-none focus:border-accent text-text"
               placeholder="Enter your email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
@@ -62,7 +68,7 @@ export default function Register() {
             <input
               id="password"
               type="password"
-              className="w-full pl-10 pr-3 py-2 rounded-md bg-background border border-gray-700 focus:outline-none focus:border-accent"
+              className="w-full pl-10 pr-3 py-2 rounded-md bg-background border border-gray-700 focus:outline-none focus:border-accent text-text"
               placeholder="Choose a password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
@@ -74,6 +80,9 @@ export default function Register() {
           Register
         </button>
       </form>
+      <p className="mt-4 text-center">
+        Already have an account? <Link href="/auth/login" className="text-accent hover:underline">Login</Link>
+      </p>
     </div>
   )
 }
