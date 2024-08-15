@@ -1,11 +1,51 @@
 'use client'
 
 import Link from 'next/link';
-import { useState } from 'react';
-import { FiMenu, FiX } from 'react-icons/fi';
+import { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
+import { FiMenu, FiX, FiLogOut } from 'react-icons/fi';
 
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const router = useRouter();
+
+  useEffect(() => {
+    // Check if user is logged in
+    const token = localStorage.getItem('authToken');
+    setIsLoggedIn(!!token);
+  }, []);
+
+  const handleLogout = () => {
+    localStorage.removeItem('authToken');
+    setIsLoggedIn(false);
+    router.push('/auth/login');
+  };
+
+  const AuthLinks = () => (
+    <>
+      <Link href="/auth/login" className="text-text hover:text-accent px-3 py-2 rounded-md text-sm font-medium">
+        Login
+      </Link>
+      <Link href="/auth/register" className="text-text hover:text-accent px-3 py-2 rounded-md text-sm font-medium">
+        Register
+      </Link>
+    </>
+  );
+
+  const UserLinks = () => (
+    <>
+      <Link href="/documents" className="text-text hover:text-accent px-3 py-2 rounded-md text-sm font-medium">
+        Documents
+      </Link>
+      <Link href="/documents/upload" className="text-text hover:text-accent px-3 py-2 rounded-md text-sm font-medium">
+        Upload
+      </Link>
+      <button onClick={handleLogout} className="text-text hover:text-accent px-3 py-2 rounded-md text-sm font-medium flex items-center">
+        <FiLogOut className="mr-1" /> Logout
+      </button>
+    </>
+  );
 
   return (
     <nav className="bg-surface">
@@ -18,18 +58,7 @@ export default function Navbar() {
           </div>
           <div className="hidden md:block">
             <div className="ml-10 flex items-baseline space-x-4">
-              <Link href="/documents" className="text-text hover:text-accent px-3 py-2 rounded-md text-sm font-medium">
-                Documents
-              </Link>
-              <Link href="/documents/upload" className="text-text hover:text-accent px-3 py-2 rounded-md text-sm font-medium">
-                Upload
-              </Link>
-              <Link href="/auth/login" className="text-text hover:text-accent px-3 py-2 rounded-md text-sm font-medium">
-                Login
-              </Link>
-              <Link href="/auth/register" className="text-text hover:text-accent px-3 py-2 rounded-md text-sm font-medium">
-                Register
-              </Link>
+              {isLoggedIn ? <UserLinks /> : <AuthLinks />}
             </div>
           </div>
           <div className="md:hidden">
@@ -45,18 +74,28 @@ export default function Navbar() {
       {isOpen && (
         <div className="md:hidden">
           <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3">
-            <Link href="/documents" className="text-text hover:text-accent block px-3 py-2 rounded-md text-base font-medium">
-              Documents
-            </Link>
-            <Link href="/documents/upload" className="text-text hover:text-accent block px-3 py-2 rounded-md text-base font-medium">
-              Upload
-            </Link>
-            <Link href="/auth/login" className="text-text hover:text-accent block px-3 py-2 rounded-md text-base font-medium">
-              Login
-            </Link>
-            <Link href="/auth/register" className="text-text hover:text-accent block px-3 py-2 rounded-md text-base font-medium">
-              Register
-            </Link>
+            {isLoggedIn ? (
+              <>
+                <Link href="/documents" className="text-text hover:text-accent block px-3 py-2 rounded-md text-base font-medium">
+                  Documents
+                </Link>
+                <Link href="/documents/upload" className="text-text hover:text-accent block px-3 py-2 rounded-md text-base font-medium">
+                  Upload
+                </Link>
+                <button onClick={handleLogout} className="text-text hover:text-accent block px-3 py-2 rounded-md text-base font-medium w-full text-left flex items-center">
+                  <FiLogOut className="mr-2" /> Logout
+                </button>
+              </>
+            ) : (
+              <>
+                <Link href="/auth/login" className="text-text hover:text-accent block px-3 py-2 rounded-md text-base font-medium">
+                  Login
+                </Link>
+                <Link href="/auth/register" className="text-text hover:text-accent block px-3 py-2 rounded-md text-base font-medium">
+                  Register
+                </Link>
+              </>
+            )}
           </div>
         </div>
       )}
