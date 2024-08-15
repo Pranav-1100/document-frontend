@@ -4,35 +4,30 @@ import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { createDocument } from '../../../utils/api'
 import { FiUpload } from 'react-icons/fi'
-import FileUpload from '../../../components/FileUpload'
 import { withAuth } from '../../../utils/withAuth'
 
 function UploadDocument() {
   const [title, setTitle] = useState('')
   const [content, setContent] = useState('')
-  const [fileId, setFileId] = useState(null)
+  const [error, setError] = useState('')
   const router = useRouter()
 
   const handleSubmit = async (e) => {
     e.preventDefault()
+    setError('')
     try {
-      const data = await createDocument(title, content, fileId)
-      console.log('Document created:', data)
+      await createDocument(title, content)
       router.push('/documents')
     } catch (error) {
       console.error('Failed to create document:', error)
-      // Handle error (e.g., show error message)
+      setError('Failed to create document. Please try again.')
     }
-  }
-
-  const handleFileUploaded = (fileData) => {
-    setFileId(fileData.id)
   }
 
   return (
     <div className="max-w-2xl mx-auto">
       <h1 className="text-3xl font-bold mb-6 text-accent">Upload New Document</h1>
-      <FileUpload onFileUploaded={handleFileUploaded} />
+      {error && <p className="text-red-500 mb-4">{error}</p>}
       <form onSubmit={handleSubmit} className="bg-surface p-8 rounded-lg shadow-lg">
         <div className="mb-4">
           <label htmlFor="title" className="block text-sm font-medium mb-2">Document Title</label>

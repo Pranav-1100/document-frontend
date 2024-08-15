@@ -30,7 +30,7 @@ export function AppProvider({ children }) {
   }, []);
 
   return (
-    <AppContext.Provider value={{ documents, conversations, loading, fetchData }}>
+    <AppContext.Provider value={{ documents, setDocuments, conversations, setConversations, loading, fetchData }}>
       {children}
     </AppContext.Provider>
   );

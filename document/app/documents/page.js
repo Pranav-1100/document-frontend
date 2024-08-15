@@ -1,20 +1,39 @@
 'use client'
 
-import { useEffect } from 'react'
+import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import { FiFile, FiPlus } from 'react-icons/fi'
 import { withAuth } from '../../utils/withAuth'
-import { useAppContext } from '../../context/AppContext'
+import { getDocuments } from '../../utils/api'
 
 function Documents() {
-  const { documents, loading, fetchData } = useAppContext();
+  const [documents, setDocuments] = useState([])
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState('')
 
   useEffect(() => {
-    fetchData();
-  }, []);
+    fetchDocuments()
+  }, [])
+
+  const fetchDocuments = async () => {
+    try {
+      setLoading(true)
+      const data = await getDocuments()
+      setDocuments(data)
+    } catch (error) {
+      console.error('Failed to fetch documents:', error)
+      setError('Failed to fetch documents. Please try again.')
+    } finally {
+      setLoading(false)
+    }
+  }
 
   if (loading) {
-    return <div>Loading...</div>;
+    return <div>Loading...</div>
+  }
+
+  if (error) {
+    return <div className="text-red-500">{error}</div>
   }
 
   return (
@@ -32,7 +51,7 @@ function Documents() {
             <div className="bg-surface p-6 rounded-lg hover:bg-primary transition duration-300">
               <FiFile className="text-4xl mb-4 text-accent" />
               <h3 className="text-lg font-semibold mb-2">{doc.title}</h3>
-              <p className="text-sm text-gray-400">{doc.description || 'No description'}</p>
+              <p className="text-sm text-gray-400">{doc.content.substring(0, 100)}...</p>
             </div>
           </Link>
         ))}
