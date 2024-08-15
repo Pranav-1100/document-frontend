@@ -18,7 +18,7 @@ export default function Login() {
     try {
       const data = await login(email, password)
       localStorage.setItem('authToken', data.token)
-      router.push('/documents')
+      router.push('/') // Redirect to home page after successful login
     } catch (error) {
       console.error('Login failed:', error)
       setError('Invalid email or password')

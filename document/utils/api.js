@@ -23,51 +23,63 @@ export const register = async (username, email, password) => {
 };
 
 export const getCurrentUser = async () => {
-  const response = await api.get('/api/auth/me');
+  const response = await api.get('/api/auth/me', { headers: getAuthHeader() });
   return response.data;
 };
 
-// Then use it in your API calls, for example:
+// Documents
 export const getDocuments = async () => {
   const response = await api.get('/api/documents', { headers: getAuthHeader() });
   return response.data;
 };
 
 export const getDocument = async (id) => {
-  const response = await api.get(`/api/documents/${id}`);
+  const response = await api.get(`/api/documents/${id}`, { headers: getAuthHeader() });
   return response.data;
 };
 
-export const createDocument = async (title, content) => {
-  const response = await api.post('/api/documents', { title, content });
+export const createDocument = async (title, content, fileId = null) => {
+  const response = await api.post('/api/documents', { title, content, fileId }, { headers: getAuthHeader() });
   return response.data;
 };
 
 export const updateDocument = async (id, title, content) => {
-  const response = await api.patch(`/api/documents/${id}`, { title, content });
+  const response = await api.patch(`/api/documents/${id}`, { title, content }, { headers: getAuthHeader() });
   return response.data;
 };
 
 export const deleteDocument = async (id) => {
-  const response = await api.delete(`/api/documents/${id}`);
+  const response = await api.delete(`/api/documents/${id}`, { headers: getAuthHeader() });
   return response.data;
 };
 
 export const summarizeDocument = async (id) => {
-  const response = await api.post(`/api/documents/${id}/summarize`);
+  const response = await api.post(`/api/documents/${id}/summarize`, {}, { headers: getAuthHeader() });
   return response.data;
 };
 
 export const askQuestion = async (id, question) => {
-  const response = await api.post(`/api/documents/${id}/ask`, { question });
+  const response = await api.post(`/api/documents/${id}/ask`, { question }, { headers: getAuthHeader() });
   return response.data;
 };
 
 export const streamChat = async (id, messages) => {
-  const response = await api.post(`/api/documents/${id}/chat/stream`, { messages });
+  const response = await api.post(`/api/documents/${id}/chat/stream`, { messages }, { headers: getAuthHeader() });
   return response.data;
 };
 
+// Files
+export const uploadFile = async (file) => {
+  const formData = new FormData();
+  formData.append('file', file);
+  const response = await api.post('/api/files/upload', formData, {
+    headers: {
+      ...getAuthHeader(),
+      'Content-Type': 'multipart/form-data',
+    },
+  });
+  return response.data;
+};
 // Tags
 export const createTag = async (name) => {
   const response = await api.post('/api/tags', { name });
@@ -190,16 +202,6 @@ export const getUserRoles = async (userId) => {
 // Search
 export const searchDocuments = async (query) => {
   const response = await api.get(`/api/search?query=${query}`);
-  return response.data;
-};
-
-// Files
-export const uploadFile = async (file) => {
-  const formData = new FormData();
-  formData.append('file', file);
-  const response = await api.post('/api/files/upload', formData, {
-    headers: { 'Content-Type': 'multipart/form-data' },
-  });
   return response.data;
 };
 

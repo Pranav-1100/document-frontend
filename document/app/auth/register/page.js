@@ -19,13 +19,13 @@ export default function Register() {
     try {
       const data = await register(username, email, password)
       localStorage.setItem('authToken', data.token)
-      router.push('/documents')
+      router.push('/') // Redirect to home page after successful registration
     } catch (error) {
       console.error('Registration failed:', error)
       setError('Registration failed. Please try again.')
     }
   }
-
+  
   return (
     <div className="max-w-md mx-auto">
       <h1 className="text-3xl font-bold mb-6 text-center text-accent">Register</h1>

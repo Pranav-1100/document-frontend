@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import { useRouter } from 'next/navigation'
 import { createDocument } from '../../../utils/api'
 import { FiUpload } from 'react-icons/fi'
 import FileUpload from '../../../components/FileUpload'
@@ -10,13 +11,14 @@ function UploadDocument() {
   const [title, setTitle] = useState('')
   const [content, setContent] = useState('')
   const [fileId, setFileId] = useState(null)
+  const router = useRouter()
 
   const handleSubmit = async (e) => {
     e.preventDefault()
     try {
       const data = await createDocument(title, content, fileId)
       console.log('Document created:', data)
-      // Handle successful upload (e.g., show success message, redirect)
+      router.push('/documents')
     } catch (error) {
       console.error('Failed to create document:', error)
       // Handle error (e.g., show error message)
