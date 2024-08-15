@@ -183,4 +183,30 @@ export const getUserRoles = async (userId) => {
   return response.data;
 };
 
+// Search
+export const searchDocuments = async (query) => {
+  const response = await api.get(`/api/search?query=${query}`);
+  return response.data;
+};
+
+// Files
+export const uploadFile = async (file) => {
+  const formData = new FormData();
+  formData.append('file', file);
+  const response = await api.post('/api/files/upload', formData, {
+    headers: { 'Content-Type': 'multipart/form-data' },
+  });
+  return response.data;
+};
+
+export const getFile = async (id) => {
+  const response = await api.get(`/api/files/${id}`);
+  return response.data;
+};
+
+export const deleteFile = async (id) => {
+  const response = await api.delete(`/api/files/${id}`);
+  return response.data;
+};
+
 export default api;
