@@ -1,10 +1,11 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { useRouter } from 'next/router'
+import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { getDocument, summarizeDocument, deleteDocument } from '../../../utils/api'
 import { FiMessageSquare, FiTrash2 } from 'react-icons/fi'
+import TagManager from '../../../components/TagManager'
 
 export default function Document({ params }) {
   const [document, setDocument] = useState(null)
@@ -12,16 +13,17 @@ export default function Document({ params }) {
   const router = useRouter()
 
   useEffect(() => {
-    const fetchDocument = async () => {
-      try {
-        const data = await getDocument(params.id)
-        setDocument(data)
-      } catch (error) {
-        console.error('Failed to fetch document:', error)
-      }
-    }
     fetchDocument()
   }, [params.id])
+
+  const fetchDocument = async () => {
+    try {
+      const data = await getDocument(params.id)
+      setDocument(data)
+    } catch (error) {
+      console.error('Failed to fetch document:', error)
+    }
+  }
 
   const handleSummarize = async () => {
     try {
@@ -63,6 +65,7 @@ export default function Document({ params }) {
           </button>
         </div>
       </div>
+      <TagManager documentId={params.id} />
       <div className="mt-8">
         <h2 className="text-2xl font-bold mb-4 text-accent">Document Summary</h2>
         {summary ? (
