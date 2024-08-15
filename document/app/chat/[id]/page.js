@@ -1,18 +1,21 @@
 'use client'
 
 import { useState, useEffect, useRef } from 'react'
-import { getDocument, streamChat } from '../../../utils/api'
+import { getDocument, streamChat, getConversation } from '../../../utils/api'
 import { FiSend } from 'react-icons/fi'
 import { withAuth } from '../../../utils/withAuth'
+import { useAppContext } from '../../../context/AppContext'
 
 function Chat({ params }) {
   const [document, setDocument] = useState(null)
   const [messages, setMessages] = useState([])
   const [input, setInput] = useState('')
   const chatEndRef = useRef(null)
+  const { fetchData } = useAppContext()
 
   useEffect(() => {
     fetchDocument()
+    fetchMessages()
   }, [params.id])
 
   useEffect(() => {
@@ -28,6 +31,15 @@ function Chat({ params }) {
     }
   }
 
+  const fetchMessages = async () => {
+    try {
+      const data = await getConversation(params.id)
+      setMessages(data.messages || [])
+    } catch (error) {
+      console.error('Failed to fetch messages:', error)
+    }
+  }
+
   const handleSendMessage = async (e) => {
     e.preventDefault()
     if (!input.trim()) return
@@ -39,6 +51,7 @@ function Chat({ params }) {
     try {
       const response = await streamChat(params.id, [...messages, newMessage])
       setMessages([...messages, newMessage, { role: 'assistant', content: response.message }])
+      fetchData() // Refresh global state
     } catch (error) {
       console.error('Failed to send message:', error)
     }

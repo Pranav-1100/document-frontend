@@ -68,6 +68,11 @@ export const streamChat = async (id, messages) => {
   return response.data;
 };
 
+export const getConversation = async (id) => {
+  const response = await api.get(`/api/conversations/${id}`, { headers: getAuthHeader() });
+  return response.data;
+};
+
 // Files
 export const uploadFile = async (file) => {
   const formData = new FormData();
@@ -134,11 +139,6 @@ export const createConversation = async (title) => {
 
 export const getConversations = async () => {
   const response = await api.get('/api/conversations');
-  return response.data;
-};
-
-export const getConversation = async (id) => {
-  const response = await api.get(`/api/conversations/${id}`);
   return response.data;
 };
 

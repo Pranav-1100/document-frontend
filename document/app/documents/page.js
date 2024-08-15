@@ -1,25 +1,20 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useEffect } from 'react'
 import Link from 'next/link'
-import { getDocuments } from '../../utils/api'
 import { FiFile, FiPlus } from 'react-icons/fi'
 import { withAuth } from '../../utils/withAuth'
+import { useAppContext } from '../../context/AppContext'
 
 function Documents() {
-  const [documents, setDocuments] = useState([])
+  const { documents, loading, fetchData } = useAppContext();
 
   useEffect(() => {
-    fetchDocuments()
-  }, [])
+    fetchData();
+  }, []);
 
-  const fetchDocuments = async () => {
-    try {
-      const data = await getDocuments()
-      setDocuments(data)
-    } catch (error) {
-      console.error('Failed to fetch documents:', error)
-    }
+  if (loading) {
+    return <div>Loading...</div>;
   }
 
   return (
