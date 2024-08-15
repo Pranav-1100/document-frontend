@@ -47,4 +47,32 @@ export default function Document({ params }) {
     return <div>Loading...</div>
   }
 
+  return (
+    <div className="max-w-4xl mx-auto">
+      <h1 className="text-3xl font-bold mb-6 text-accent">{document.title}</h1>
+      <div className="bg-surface p-6 rounded-lg shadow-lg mb-6">
+        <p className="mb-4">{document.content}</p>
+        <div className="flex justify-between items-center">
+          <Link href={`/chat/${params.id}`} className="bg-accent text-white py-2 px-4 rounded-md hover:bg-blue-600 transition duration-300 flex items-center">
+            <FiMessageSquare className="mr-2" />
+            Chat about this document
+          </Link>
+          <button onClick={handleDelete} className="bg-red-500 text-white py-2 px-4 rounded-md hover:bg-red-600 transition duration-300 flex items-center">
+            <FiTrash2 className="mr-2" />
+            Delete Document
+          </button>
+        </div>
+      </div>
+      <div className="mt-8">
+        <h2 className="text-2xl font-bold mb-4 text-accent">Document Summary</h2>
+        {summary ? (
+          <p className="bg-surface p-6 rounded-lg shadow-lg">{summary}</p>
+        ) : (
+          <button onClick={handleSummarize} className="bg-accent text-white py-2 px-4 rounded-md hover:bg-blue-600 transition duration-300">
+            Generate Summary
+          </button>
+        )}
+      </div>
+    </div>
+  )
 }
