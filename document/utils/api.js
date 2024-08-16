@@ -64,9 +64,44 @@ export const askQuestion = async (id, question) => {
   return response.data;
 };
 
-export const streamChat = async (id, messages) => {
-  const response = await api.post(`/api/documents/${id}/chat/stream`, { messages }, { headers: getAuthHeader() });
-  return response.data;
+export const streamChat = async (id, messages, onChunk) => {
+  try {
+    const response = await api.post(`/documents/${id}/chat/stream`, 
+      { messages },
+      {
+        headers: getAuthHeader(),
+        responseType: 'stream'
+      }
+    );
+
+    const reader = response.data;
+    const decoder = new TextDecoder();
+
+    reader.on('data', (chunk) => {
+      const textChunk = decoder.decode(chunk);
+      const lines = textChunk.split('\n');
+      lines.forEach(line => {
+        if (line.startsWith('data: ')) {
+          try {
+            const data = JSON.parse(line.slice(6));
+            if (data.type === 'bot') {
+              onChunk(data.content);
+            }
+          } catch (error) {
+            console.error('Error parsing SSE data:', error);
+          }
+        }
+      });
+    });
+
+    return new Promise((resolve, reject) => {
+      reader.on('end', resolve);
+      reader.on('error', reject);
+    });
+  } catch (error) {
+    console.error('Error in streamChat:', error);
+    throw error;
+  }
 };
 
 // Tags
