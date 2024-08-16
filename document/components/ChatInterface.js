@@ -21,17 +21,19 @@ const ChatInterface = ({ documentId, initialMessages = [], onChatComplete }) => 
     setIsStreaming(true);
 
     try {
-      let streamedResponse = '';
       await streamChat(
         documentId,
         [...messages, newMessage],
-        (chunk) => {
-          streamedResponse += chunk;
-          setMessages(prevMessages => [
-            ...prevMessages,
-            newMessage,
-            { role: 'assistant', content: streamedResponse }
-          ]);
+        (streamedResponse) => {
+          setMessages(prevMessages => {
+            const updatedMessages = [...prevMessages];
+            if (updatedMessages[updatedMessages.length - 1].role === 'assistant') {
+              updatedMessages[updatedMessages.length - 1].content = streamedResponse;
+            } else {
+              updatedMessages.push({ role: 'assistant', content: streamedResponse });
+            }
+            return updatedMessages;
+          });
         }
       );
       if (onChatComplete) onChatComplete();
@@ -39,7 +41,6 @@ const ChatInterface = ({ documentId, initialMessages = [], onChatComplete }) => 
       console.error('Failed to send message:', error);
       setMessages(prevMessages => [
         ...prevMessages,
-        newMessage,
         { role: 'assistant', content: 'Sorry, an error occurred. Please try again.' }
       ]);
     } finally {
@@ -84,7 +85,7 @@ const ChatInterface = ({ documentId, initialMessages = [], onChatComplete }) => 
           className="px-4 py-2 bg-blue-500 text-white rounded-r-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
           disabled={isStreaming}
         >
-          Send
+          {isStreaming ? 'Sending...' : 'Send'}
         </button>
       </form>
     </div>
